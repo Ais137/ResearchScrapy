@@ -15,27 +15,34 @@ scrapy命令行工具封装了开发过程中的一些常用操作，比如项�
 # (src): /scrapy/commands/startproject.py
 
 def run(self, args, opts):
+    
     # 检测参数数量[1, 2]
     if len(args) not in (1, 2):
         raise UsageError()
+
     # 调用参数: 项目名/项目目录
     project_name = args[0]
     project_dir = args[0]
     if len(args) == 2:
         project_dir = args[1]
+
     # 检查项目目录下是否包含scrapy.cfg文件
     if exists(join(project_dir, 'scrapy.cfg')):
         self.exitcode = 1
         print(f'Error: scrapy.cfg already exists in {abspath(project_dir)}')
         return
+
     # 检测项目名是否合法
     if not self._is_valid_name(project_name):
         self.exitcode = 1
         return
+
     # 复制模板文件到项目目录
     self._copytree(self.templates_dir, abspath(project_dir))
+
     # 修改模板文件的模块名(set:project_name)
     move(join(project_dir, 'module'), join(project_dir, project_name))
+
     # TEMPLATES_TO_RENDER -> 待渲染的模板文件列表
     for paths in TEMPLATES_TO_RENDER:
         # 拼接路径 -> '${project_name}/settings.py.tmpl'
@@ -44,6 +51,7 @@ def run(self, args, opts):
         tplfile = join(project_dir, string.Template(path).substitute(project_name=project_name))
         # 渲染模板文件
         render_templatefile(tplfile, project_name=project_name, ProjectName=string_camelcase(project_name))
+
     # 输出
     print(f"New Scrapy project '{project_name}', using template directory "
             f"'{self.templates_dir}', created in:")
@@ -122,6 +130,7 @@ class ScrapyCommand:
 def execute(argv=None, settings=None):
     if argv is None:
         argv = sys.argv
+
     # 获取项目的配置文件
     if settings is None:
         settings = get_project_settings()
@@ -132,11 +141,14 @@ def execute(argv=None, settings=None):
             pass
         else:
             settings['EDITOR'] = editor
+
     # 向上遍历查找scrapy.cfg文件
     inproject = inside_project()
+
     # 获取命令行对象映射表
     # 加载默认命令模块[scrapy.commands]和自定义命令模块[scrapy.cfg:COMMANDS_MODULE]
     cmds = _get_commands_dict(settings, inproject)
+
     # 获取命令名
     cmdname = _pop_command_name(argv)
     if not cmdname:
@@ -145,21 +157,27 @@ def execute(argv=None, settings=None):
     elif cmdname not in cmds:
         _print_unknown_command(settings, cmdname, inproject)
         sys.exit(2)
+
     # 获取ScrapyCommand对象
     cmd = cmds[cmdname]
+
     # 解析命令
     parser = ScrapyArgumentParser(formatter_class=ScrapyHelpFormatter,
                                   usage=f"scrapy {cmdname} {cmd.syntax()}",
                                   conflict_handler='resolve',
                                   description=cmd.long_desc())
+
     # 设置配置数据
     settings.setdict(cmd.default_settings, priority='command')
     cmd.settings = settings
     cmd.add_options(parser)
+
     # 解析参数
     opts, args = parser.parse_known_args(args=argv[1:])
+
     # 执行 ScrapyCommand().process_options() 方法
     _run_print_help(parser, cmd.process_options, args, opts)
+
     # 执行 ScrapyCommand().run() 方法 -> 执行命令
     cmd.crawler_process = CrawlerProcess(settings)
     _run_print_help(parser, _run_command, cmd, args, opts)
@@ -177,9 +195,11 @@ def execute(argv=None, settings=None):
 
 # 获取ScrapyCommand对象映射表 -> {"模块名": "命令对象实例"}
 def _get_commands_dict(settings, inproject):
+
     # 从 scrapy.commands(默认模块) 加载命令对象
     cmds = _get_commands_from_module('scrapy.commands', inproject)
     cmds.update(_get_commands_from_entry_points(inproject))
+
     # 加载自定义命令行模块加载命令对象(scrapy.cfg:COMMANDS_MODULE)
     cmds_module = settings['COMMANDS_MODULE']
     if cmds_module:
