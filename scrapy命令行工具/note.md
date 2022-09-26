@@ -9,7 +9,7 @@ scrapy命令行工具封装了开发过程中的一些常用操作，比如项�
 上述命令用于创建scrapy项目的代码框架。其会在当前目录生下成一个 *demo* 目录，并包含一系列的模板代码。现在通过该命令来分析其源码实现和命令行工具的设计框架。
 
 ### 2. *startproject* 命令源码分析
-*startproject* 命令的源码实现位于 [/scrapy/commands/startproject.py](../src/scrapy/commands/startproject.py)
+*startproject* 命令的源码实现位于 [/commands/startproject.py](./src/commands/startproject.py)
 核心逻辑在 *Command(ScrapyCommand)* 类的 *run* 方法中。
 ```
 # (src): /scrapy/commands/startproject.py
@@ -63,7 +63,7 @@ def run(self, args, opts):
 ```
 通过对上述源码分析发现，*startproject* 命令的主要功能与特性如下
 * 主要功能: 将 **模板目录** 下的文件渲染后(值填充)复制到 **项目目录**。
-* 默认的模板目录位于 [/scrapy/templates/project/](../src/scrapy/templates/project/scrapy.cfg)
+* 默认的模板目录位于 [/templates/project/](./src/templates/project/scrapy.cfg)
 * 可以通过在设置 **TEMPLATES_DIR** 参数来修改模板目录
 * 当检测到项目目录下存在 *scrapy.cfg* 文件时会抛出异常。
 * 通过指定可选参数(project_dir)来设置项目目录，否则默认项目目录为(./project_name/): -> scrapy startproject dome ./test/
@@ -121,7 +121,7 @@ class ScrapyCommand:
 
 ### 4. 命令行工具调用入口
 知道了 *startproject* 命令的实现，现在来分析 scrapy 命令的调用入口。
-通过对源码的观察可以发现，scrapy命令行工具的调用入口位于 [/scrapy/cmdline.py](../src/scrapy/cmdline.py)
+通过对源码的观察可以发现，scrapy命令行工具的调用入口位于 [/scrapy/cmdline.py](./src/cmdline.py)
 其核心代码如下:
 ```
 # (src): /scrapy/cmdline.py

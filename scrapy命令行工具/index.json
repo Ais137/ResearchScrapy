@@ -1,0 +1,6 @@
+[
+    "/templates",
+    "/cmdline.py",
+    "/commands/__init__.py",
+    "/commands/startproject.py"
+]
