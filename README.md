@@ -1,5 +1,7 @@
 # ResearchScrapy
 
+## *该项目已迁移并整合到 [Recorder](https://github.com/Ais137/Recorder) 项目的 [Scrapy](https://github.com/Ais137/Recorder/tree/main/topic/Scrapy) 主题中。*
+
 ## Overview · 概述
 Scrapy框架学习与源码分析
 
